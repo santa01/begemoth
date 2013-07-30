@@ -1,0 +1,14 @@
+{
+    "jid":            "bot@localhost",
+    "password":       "qwerty",
+    "conference":     "conference@conference.localhost",
+    "nickname":       "Begemoth",
+    "resource":       "JAXL",
+    "host":           "localhost",
+    "port":           5222,
+    "tls":            false,
+    "verbose":        false,
+    "response_delay": 1.0,
+    "private_dir":    "/tmp/begemoth",
+    "dictionary":     "config/dictionary.json"
+}

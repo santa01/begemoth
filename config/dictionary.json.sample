@@ -1,0 +1,46 @@
+{
+    "extended_commands": {
+        "!help": {
+            "responses": [
+                "Sorry {USERNAME}, I cannot help {ARGUMENT}."
+            ]
+        }
+    },
+
+    "commands": {
+        "!help": {
+            "responses": [
+                "Hey {USERNAME}!"
+            ],
+            "actions": [
+                "echo(\"\\nI am a conference bot.\\n\");"
+            ]
+        }
+    },
+
+    "unknown_commands": {
+        "responses": [
+            "Unknown command {COMMAND}."
+        ]
+    },
+
+    "events": {
+        "on_user_online": {
+            "responses": [
+                "Hello {USERNAME}!"
+            ]
+        },
+
+        "on_self_online": {
+            "responses": [
+                "Hello everyone!"
+            ]
+        },
+
+        "on_user_offline": {
+            "responses": [
+                "Bye {USERNAME}!"
+            ]
+        }
+    }
+}
