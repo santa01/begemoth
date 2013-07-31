@@ -41,11 +41,11 @@ function response_lookup($command) {
         }
     }
 
-    if ($result['responses'] == null && $result['actions'] == null) {
-        return null;
+    if (count($result) != 0) {
+        return @$result['responses'] . eval_string(@$result['actions']);
     }
 
-    return @$result['responses'] . eval_string(@$result['actions']);
+    return null;
 }
 
 function get_command_response($command) {
