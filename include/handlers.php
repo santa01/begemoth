@@ -25,6 +25,9 @@
 require_once __DIR__ . '/JAXL/jaxl.php';
 require_once __DIR__ . '/utilites.php';
 
+$roster_notified = array();
+$roster_complete = false;
+
 function response_lookup($command) {
     $result = array();
 
@@ -149,25 +152,57 @@ function on_groupchat_message($stanza) {
 
 function on_presence_stanza($stanza) {
     global $begemoth, $config, $conference;
+    global $roster_notified, $roster_complete;
     $from = new XMPPJid($stanza->from);
-    return;
 
     if (strtolower($from->to_string())
         == strtolower($conference->to_string())
     ) {
         if (($x = $stanza->exists('x', NS_MUC . '#user')) !== false) {
             if ($x->exists('status', null, array('code' => '110')) !== false) {
+                _info('Got "available" presence notification from myself');
+                $roster_complete = true;
                 $event = 'on_self_online';
             }
         }
     } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
-        if ($stanza->exists('x', NS_MUC . '#user') !== false) {
-            $event = ($stanza->type == 'available'
-                ? 'on_user_online' : 'on_user_offline');
+        if (($x = $stanza->exists('x', NS_MUC . '#user')) !== false) {
+            if ($roster_complete) {
+                if (isset($stanza->attrs['type'])) {
+                    if ($stanza->attrs['type'] == 'unavailable') {
+                       _info('Got "unavailable" presence notification from "'
+                           . $from->resource . '"');
+                       $event = 'on_user_offline';
+                    }
+                } else {
+                    _info('Got "available" presence notification from "'
+                        . $from->resource . '"');
+                    $event = 'on_user_online';
+                }
+            } else {
+                $roster_notified[$from->to_string()] = true;
+            }
         }
     }
 
-    if (isset($event)) {
+    if ($roster_complete && isset($event)) {
+        if (array_key_exists($from->to_string(), $roster_notified)) {
+            switch ($event) {
+                case 'on_user_online':
+                    _info('User "' . $from->resource . '" updated the status');
+                    return;  // Status change, not really went online
+
+                case 'on_user_offline':
+                    _info('User "' . $from->resource . '" went offline');
+                    unset($roster_notified[$from->to_string()]);
+                    break;
+            }
+        } else {
+            // Somebody really went online
+            _info('User "' . $from->resource . '" went online');
+            $roster_notified[$from->to_string()] = true;
+        }
+
         _info('Looking for event "' . $event . '"');
 
         if (($response = get_event_response($event)) != null) {
