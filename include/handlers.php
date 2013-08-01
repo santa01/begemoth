@@ -155,18 +155,14 @@ function on_presence_stanza($stanza) {
     global $roster_notified, $roster_complete;
     $from = new XMPPJid($stanza->from);
 
-    if (strtolower($from->to_string())
-        == strtolower($conference->to_string())
-    ) {
-        if (($x = $stanza->exists('x', NS_MUC . '#user')) !== false) {
-            if ($x->exists('status', null, array('code' => '110')) !== false) {
-                _info('Got "available" presence notification from myself');
-                $roster_complete = true;
-                $event = 'on_self_online';
-            }
-        }
-    } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
-        if (($x = $stanza->exists('x', NS_MUC . '#user')) !== false) {
+    if (($x = $stanza->exists('x', NS_MUC . '#user')) !== false) {
+        if (strtolower($from->to_string())
+            == strtolower($conference->to_string())
+        ) {
+            _info('Got "available" presence notification from myself');
+            $roster_complete = true;
+            $event = 'on_self_online';
+        } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
             if ($roster_complete) {
                 if (isset($stanza->attrs['type'])) {
                     if ($stanza->attrs['type'] == 'unavailable') {
