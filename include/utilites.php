@@ -48,7 +48,7 @@ function daemonize() {
 }
 
 function load_json($json_file) {
-    if (($json = file_get_contents($json_file)) === false) {
+    if (($json = @file_get_contents($json_file)) === false) {
         return false;
     }
 
