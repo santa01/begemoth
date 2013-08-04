@@ -121,6 +121,10 @@ function on_groupchat_message($stanza) {
 
     preg_match('/^(\S+)\s*(.*)$/', trim($stanza->body), $command);
     array_shift($command);  // Remove full match from $command[0]
+
+    if ($command[1] == "") {
+        unset($command[1]);  // Empty strings are also matched
+    }
     $command_parts = count($command);
 
     if ($command_parts > 0 && $command[0][0] == '!') {
