@@ -54,7 +54,7 @@ function response_lookup($command) {
 function get_command_response($command) {
     global $dictionary;
 
-    if (count($command) > 1
+    if (count($command) > 1 && $command[1] != ''
         && array_key_exists('extended_commands', $dictionary)
         && array_key_exists($command[0], $dictionary['extended_commands'])
     ) {
