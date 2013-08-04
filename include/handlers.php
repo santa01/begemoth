@@ -119,12 +119,8 @@ function on_groupchat_message($stanza) {
     _info('Message (' . gmdate('Y-m-dTH:i:sZ') . ') '
          . $from->resource . ': ' . $stanza->body);
 
-    preg_match('/^(\S+)\s*(.*)$/', trim($stanza->body), $command);
+    preg_match('/^(\S+)\s*(.*)$/u', trim($stanza->body), $command);
     array_shift($command);  // Remove full match from $command[0]
-
-    if ($command[1] == "") {
-        unset($command[1]);  // Empty strings are also matched
-    }
     $command_parts = count($command);
 
     if ($command_parts > 0 && $command[0][0] == '!') {
