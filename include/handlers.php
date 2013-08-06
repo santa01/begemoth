@@ -156,7 +156,7 @@ function on_presence_stanza($stanza) {
     global $roster_notified, $roster_complete;
     $from = new XMPPJid($stanza->from);
 
-    if (($x = $stanza->exists('x', NS_MUC . '#user')) !== false) {
+    if ($stanza->exists('x', NS_MUC . '#user') !== false) {
         if (strtolower($from->to_string())
             == strtolower($conference->to_string())
         ) {
