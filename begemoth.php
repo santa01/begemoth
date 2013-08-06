@@ -87,6 +87,7 @@ $begemoth->add_cb('on_auth_success',      function() { on_auth_success(); });
 $begemoth->add_cb('on_auth_failure',      function($reason) { on_auth_failure($reason); });
 $begemoth->add_cb('on_groupchat_message', function($stanza) { on_groupchat_message($stanza); });
 $begemoth->add_cb('on_presence_stanza',   function($stanza) { on_presence_stanza($stanza); });
+$begemoth->add_cb('on_get_iq',            function($stanza) { on_get_iq($stanza); });
 
 $conference = new XMPPJid($config['conference'] . '/' . $config['nickname']);
 

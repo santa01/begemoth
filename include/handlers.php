@@ -24,6 +24,7 @@
 
 require_once __DIR__ . '/JAXL/jaxl.php';
 require_once __DIR__ . '/utilites.php';
+require_once __DIR__ . '/version.php';
 
 $roster_notified = array();
 $roster_complete = false;
@@ -214,6 +215,55 @@ function on_presence_stanza($stanza) {
             _info('I have nothing to reply');
         }
     }
+}
+
+function on_get_iq($stanza) {
+    global $begemoth, $conference;
+
+    if (!$stanza->from || !$stanza->id) {
+        return;
+    }
+
+    $attrs = array(
+        'id' => $stanza->id,
+        'to' => $stanza->from,
+        'from' => $conference->to_string()
+    );
+
+    if ($stanza->type == 'get') {
+        if ($stanza->exists('query', 'jabber:iq:version')) {
+            $attrs['type'] = 'result';
+
+            $payload = new JAXLXml('query', 'jabber:iq:version');
+            $payload->c('name', null, array(), NAME);
+
+            $payload->up();
+            $payload->c('version', null, array(),
+                VERSION . ' (JAXL ' . JAXL::version . ')');
+
+            $payload->up();
+            $payload->c('os', null, array(),
+                PHP_OS . ' (PHP ' . PHP_VERSION . ')');
+        }
+    }
+
+    if (!isset($payload)) {
+        $attrs['type'] = 'error';
+
+        $payload = new JAXLXml('error',
+            array('code' => 501, 'type' => 'cancel'));
+        $payload->c('feature-not-implemented',
+            'urn:ietf:params:xml:ns:xmpp-stanzas');
+    }
+
+    $response = $begemoth->get_iq_pkt($attrs, $payload);
+    if ($stanza->exists('vCard', 'vcard-temp') !== false) {
+        // As required by XEP-0054
+        $response->top();
+        $response->c('vCard', 'vcard-temp');
+    }
+
+    $begemoth->send($response);
 }
 
 ?>
