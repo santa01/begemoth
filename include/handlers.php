@@ -116,6 +116,7 @@ function on_groupchat_message($stanza) {
         return;
     }
 
+    $stanza->body = htmlspecialchars_decode($stanza->body);
     $from = new XMPPJid($stanza->from);
     _info('Message (' . gmdate('Y-m-dTH:i:sZ') . ') '
          . $from->resource . ': ' . $stanza->body);
