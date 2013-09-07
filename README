@@ -10,8 +10,12 @@ one is choosen on a random basis. Begemoth also performs simple pattern
 substitution and executes php code and sends the output in reply (if
 configured).
 
-Bot requires php5 and JAXL3 library (https://github.com/abhinavsingh/JAXL) put
-into include directory.
+Bot requires php5 and JAXL3 library (https://github.com/abhinavsingh/JAXL)
+which has been merged into includ e/JAXL subtree. To update JAXL dependency
+you can do:
+
+    git remote add -f jaxl https://github.com/abhinavsingh/JAXL.git
+    git pull -s subtree jaxl v3.x
 
 If you are interested in the bot, you can contact me via santa.ssh@gmail.com
 
