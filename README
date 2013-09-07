@@ -11,7 +11,7 @@ substitution and executes php code and sends the output in reply (if
 configured).
 
 Bot requires php5 and JAXL3 library (https://github.com/abhinavsingh/JAXL)
-which has been merged into includ e/JAXL subtree. To update JAXL dependency
+which has been merged into include/JAXL subtree. To update JAXL dependency
 you can do:
 
     git remote add -f --no-tags jaxl https://github.com/abhinavsingh/JAXL.git
