@@ -25,6 +25,7 @@
 require_once __DIR__ . '/include/JAXL/jaxl.php';
 require_once __DIR__ . '/include/handlers.php';
 require_once __DIR__ . '/include/utilites.php';
+require_once __DIR__ . '/include/plugins.php';
 
 function print_help() {
     echo('Usage: ' . basename(__FILE__) . ' -c config [options]\n\n'
@@ -64,6 +65,11 @@ if (!array_key_exists('f', $options)) {
     daemonize();
 }
 
+_info('Loading plugins from "' . $config['plugins_dir'] . '"');
+if (!load_plugins($config['plugins_dir'])) {
+    _warning('Failed to load plugins from"' . $config['plugins_dir'] . '"');
+}
+
 $begemoth = new JAXL(array(
     'jid'       => $config['jid'],
     'pass'      => $config['password'],
@@ -83,11 +89,11 @@ $begemoth->require_xep(array(
     '0199'   // XMPP Ping
 ));
 
-$begemoth->add_cb('on_auth_success', on_auth_success);
-$begemoth->add_cb('on_auth_failure', on_auth_failure);
-$begemoth->add_cb('on_groupchat_message', on_groupchat_message);
-$begemoth->add_cb('on_presence_stanza', on_presence_stanza);
-$begemoth->add_cb('on_get_iq', on_get_iq);
+$begemoth->add_cb('on_auth_success', 'on_auth_success');
+$begemoth->add_cb('on_auth_failure', 'on_auth_failure');
+$begemoth->add_cb('on_groupchat_message', 'on_groupchat_message');
+$begemoth->add_cb('on_presence_stanza', 'on_presence_stanza');
+$begemoth->add_cb('on_get_iq', 'on_get_iq');
 
 $conference = new XMPPJid($config['conference'] . '/' . $config['nickname']);
 

@@ -10,5 +10,6 @@
     "verbose":        false,
     "response_delay": 1.0,
     "private_dir":    "/tmp/begemoth",
+    "plugins_dir":    "/tmp/plugins",
     "dictionary":     "config/dictionary.json"
 }
