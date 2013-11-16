@@ -57,8 +57,8 @@ if (($dictionary = load_json($config['dictionary'])) == false) {
 }
 
 if (!array_key_exists('f', $options)) {
+    _info('Redirecting logs to "' . $log_path . '"');
     $log_path = $config['private_dir'] . '/log/' . 'jaxl.log';
-    _info('Logs are redirected to "' . $log_path . '"');
 
     _info('Forking to background');
     daemonize();
@@ -83,11 +83,11 @@ $begemoth->require_xep(array(
     '0199'   // XMPP Ping
 ));
 
-$begemoth->add_cb('on_auth_success',      function() { on_auth_success(); });
-$begemoth->add_cb('on_auth_failure',      function($reason) { on_auth_failure($reason); });
-$begemoth->add_cb('on_groupchat_message', function($stanza) { on_groupchat_message($stanza); });
-$begemoth->add_cb('on_presence_stanza',   function($stanza) { on_presence_stanza($stanza); });
-$begemoth->add_cb('on_get_iq',            function($stanza) { on_get_iq($stanza); });
+$begemoth->add_cb('on_auth_success', on_auth_success);
+$begemoth->add_cb('on_auth_failure', on_auth_failure);
+$begemoth->add_cb('on_groupchat_message', on_groupchat_message);
+$begemoth->add_cb('on_presence_stanza', on_presence_stanza);
+$begemoth->add_cb('on_get_iq', on_get_iq);
 
 $conference = new XMPPJid($config['conference'] . '/' . $config['nickname']);
 
