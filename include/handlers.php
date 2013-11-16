@@ -24,6 +24,7 @@
 
 require_once __DIR__ . '/JAXL/jaxl.php';
 require_once __DIR__ . '/utilites.php';
+require_once __DIR__ . '/plugins.php';
 require_once __DIR__ . '/version.php';
 
 $roster_notified = array();
@@ -35,7 +36,7 @@ function response_lookup($command) {
     foreach ($command as $section => $variations) {
         switch ($section) {
             case 'responses':
-            case 'actions':
+            case 'plugins':
                 $available_variations = count($command[$section]);
                 $variation_index = mt_rand(0, $available_variations - 1);
                 _info('Found ' . $available_variations . ' ' . $section . ', '
@@ -46,7 +47,7 @@ function response_lookup($command) {
     }
 
     if (count($result) != 0) {
-        return @$result['responses'] . eval_string(@$result['actions']);
+        return @$result['responses'] . dispatch_handler(@$result['plugins']);
     }
 
     return null;

@@ -11,9 +11,16 @@
         "!help": {
             "responses": [
                 "Hey {USERNAME}!"
+            ]
+        },
+
+        "!dice": {
+            "responses": [
+                "/me throwing a dice:"
             ],
-            "actions": [
-                "echo(\"\\nI am a conference bot.\\n\");"
+
+            "plugins": [
+                "dice"
             ]
         }
     },
