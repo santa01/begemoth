@@ -126,7 +126,7 @@ function on_groupchat_message($stanza) {
     array_shift($command);  // Remove full match from $command[0]
     $command_parts = count($command);
 
-    if ($command_parts > 0 && $command[0][0] == '!') {
+    if ($command_parts > 0 && $command[0][0] == $config['command_prefix']) {
         _info('Looking for command "' . $command[0] . '"');
 
         if (($response = get_command_response($command)) != null) {
