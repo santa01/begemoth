@@ -1,52 +1,64 @@
 {
-    "extended_commands": {
-        "!help": {
+    "commands": {
+        "help": {
             "responses": [
-                "Sorry {USERNAME}, I cannot help {ARGUMENT}."
+                "Sorry {USERNAME}, no help available.",
+                "God help us all {USERNAME}."
             ]
         }
     },
 
-    "commands": {
-        "!help": {
+    "extended_commands": {
+        "help": {
             "responses": [
-                "Hey {USERNAME}!"
-            ]
-        },
-
-        "!dice": {
-            "responses": [
-                "/me throwing a dice:"
-            ],
-
-            "plugins": [
-                "dice"
+                "Sorry {USERNAME}, I cannot help {ARGUMENT}.",
+                "{ARGUMENT}? Dunno what are you talking about."
             ]
         }
     },
 
     "unknown_commands": {
         "responses": [
-            "Unknown command {COMMAND}."
+            "Unknown command {COMMAND}.",
+            "Nothing to do with {COMMAND}."
         ]
     },
 
+    "plugins": {
+        "bash": {
+            "responses": [
+                "/me is reading a quote:",
+                "Quote of the day:"
+            ]
+        },
+
+        "dice": {
+            "responses": [
+                "/me is throwing a dice:",
+                "The voices in my head keep telling me:"
+            ]
+        }
+    }
+
     "events": {
-        "on_user_online": {
+        "user_online": {
             "responses": [
-                "Hello {USERNAME}!"
+                "Hello {USERNAME}!",
+                "Hola {USERNAME}!"
             ]
         },
 
-        "on_self_online": {
+        "self_online": {
             "responses": [
-                "Hello everyone!"
+                "Hello everyone!",
+                "/me is back!"
             ]
         },
 
-        "on_user_offline": {
+        "user_offline": {
             "responses": [
-                "Bye {USERNAME}!"
+                "Bye {USERNAME}!",
+                "Farewell {USERNAME}!"
             ]
         }
     }
