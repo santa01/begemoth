@@ -27,7 +27,7 @@ $plugins = array();
 function register_handler($name, $handler) {
     global $plugins;
 
-    if (array_key_exists($name, $plugins)) {
+    if (isset($plugins[$name])) {
         return false;
     }
 

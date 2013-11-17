@@ -56,23 +56,21 @@ function response_lookup($command) {
 function get_command_response($command) {
     global $dictionary;
 
-    if (count($command) > 1 && $command[1] != ''
-        && array_key_exists('extended_commands', $dictionary)
-        && array_key_exists($command[0], $dictionary['extended_commands'])
+    // Try extended commands list
+    if (isset($dictionary['extended_commands'][$command[0]])
+        && isset($command[1])
     ) {
         _info('Trying "extended_commands" section');
         return response_lookup($dictionary['extended_commands'][$command[0]]);
     }
 
-    // Fallback to simple command even if argument supplied
-    if (array_key_exists('commands', $dictionary)
-        && array_key_exists($command[0], $dictionary['commands'])
-    ) {
+    // Fallback to simple command despite passed argument (if any)
+    if (isset($dictionary['commands'][$command[0]])) {
         _info('Trying "commands" section');
         return response_lookup($dictionary['commands'][$command[0]]);
     }
 
-    if (array_key_exists('unknown_commands', $dictionary)) {
+    if (isset($dictionary['unknown_commands'])) {
         _info('Trying "unknown_commands" section');
         return response_lookup($dictionary['unknown_commands']);
     }
@@ -83,9 +81,7 @@ function get_command_response($command) {
 function get_event_response($event) {
     global $dictionary;
 
-    if (array_key_exists('events', $dictionary)
-        && array_key_exists($event, $dictionary['events'])
-    ) {
+    if (isset($dictionary['events'][$event])) {
         _info('Trying "events" section');
         return response_lookup($dictionary['events'][$event]);
     }
@@ -120,7 +116,7 @@ function on_groupchat_message($stanza) {
     $stanza->body = htmlspecialchars_decode($stanza->body);
     $from = new XMPPJid($stanza->from);
     _info('Message (' . gmdate('Y-m-dTH:i:sZ') . ') '
-         . $from->resource . ': ' . $stanza->body);
+        . $from->resource . ': ' . $stanza->body);
 
     preg_match('/^(\S+)\s*(.*)$/', trim($stanza->body), $command);
     array_shift($command);  // Remove full match from $command[0]
@@ -185,7 +181,7 @@ function on_presence_stanza($stanza) {
     }
 
     if ($roster_complete && isset($event)) {
-        if (array_key_exists($from->to_string(), $roster_notified)) {
+        if (isset($roster_notified[$from->to_string()])) {
             switch ($event) {
                 case 'on_user_online':
                     _info('User "' . $from->resource . '" updated the status');

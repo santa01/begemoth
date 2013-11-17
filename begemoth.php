@@ -35,12 +35,12 @@ function print_help() {
 }
 
 $options = getopt('c:fh');
-if (array_key_exists('h', $options)) {
+if (isset($options['h'])) {
     print_help();
     exit(0);
 }
 
-if (!array_key_exists('c', $options)) {
+if (!isset($options['c'])) {
     print_help();
     exit(1);
 }
@@ -51,15 +51,19 @@ if (($config = load_json($options['c'])) == false) {
     exit(1);
 }
 
+#
+# From this point we imply config has all vital options defined
+#
+
 _info('Loading dictionary from "' . $config['dictionary'] . '"');
 if (($dictionary = load_json($config['dictionary'])) == false) {
     _error('Failed to load "' . $config['dictionary'] . '"');
     exit(1);
 }
 
-if (!array_key_exists('f', $options)) {
+if (!isset($options['f'])) {
     _info('Redirecting logs to "' . $log_path . '"');
-    $log_path = $config['private_dir'] . '/log/' . 'jaxl.log';
+    $log_path = $config['private_dir'] . '/log/jaxl.log';
 
     _info('Forking to background');
     daemonize();
