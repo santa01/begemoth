@@ -24,11 +24,15 @@
 
 require_once __DIR__ . '/../include/plugins.php';
 
-function bash_handler() {
+function bash_handler($argument) {
+    if (isset($argument)) {
+        return null;
+    }
+
     $context = stream_context_create(array('http' => array('timeout' => 3)));
     $quote = @file_get_contents('http://bash.im/forweb/?u', false, $context);
     if ($quote === false) {
-        return "\n\n";
+        return null;
     }
 
     $quote = strtr($quote, array("\n" => ''));

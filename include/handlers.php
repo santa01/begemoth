@@ -31,30 +31,29 @@ $roster_notified = array();
 $roster_complete = false;
 
 function response_lookup($command) {
-    $result = array();
-
-    foreach ($command as $section => $variations) {
-        switch ($section) {
-            case 'responses':
-            case 'plugins':
-                $available_variations = count($command[$section]);
-                $variation_index = mt_rand(0, $available_variations - 1);
-                _info('Found ' . $available_variations . ' ' . $section . ', '
-                    . 'using #' . ($variation_index + 1));
-                $result[$section] = $command[$section][$variation_index];
-                break;
-        }
+    if (!isset($command['responses'])) {
+        return null;
     }
 
-    if (count($result) != 0) {
-        return @$result['responses'] . dispatch_handler(@$result['plugins']);
-    }
+    $available_variations = count($command['responses']);
+    $variation_index = mt_rand(0, $available_variations - 1);
 
-    return null;
+    _info('Found ' . $available_variations . ' responses, '
+        . 'using #' . ($variation_index + 1));
+    return $command['responses'][$variation_index];
 }
 
 function get_command_response($command) {
     global $dictionary;
+
+    // Try available plugins first
+    if (isset($dictionary['plugins'][$command[0]])) {
+        _info('Trying "plugins" section');
+        if (($output = dispatch_handler($command[0], @$command[1])) != null) {
+            return response_lookup($dictionary['plugins'][$command[0]])
+                . $output;
+        }
+    }
 
     // Try extended commands list
     if (isset($dictionary['extended_commands'][$command[0]])
@@ -120,11 +119,15 @@ function on_groupchat_message($stanza) {
 
     preg_match('/^(\S+)\s*(.*)$/', trim($stanza->body), $command);
     array_shift($command);  // Remove full match from $command[0]
+    if (isset($command[1]) && $command[1] == '') {
+        unset($command[1]);  // Remove empty match
+    }
+
     $command_parts = count($command);
-
     if ($command_parts > 0 && $command[0][0] == $config['command_prefix']) {
-        _info('Looking for command "' . $command[0] . '"');
+        $command[0] = substr($command[0], 1);  // Remove command prefix
 
+        _info('Looking for command "' . $command[0] . '"');
         if (($response = get_command_response($command)) != null) {
             switch ($command_parts) {
                 case 2:
@@ -160,19 +163,19 @@ function on_presence_stanza($stanza) {
         ) {
             _info('Got "available" presence notification from myself');
             $roster_complete = true;
-            $event = 'on_self_online';
+            $event = 'self_online';
         } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
             if ($roster_complete) {
                 if (isset($stanza->attrs['type'])) {
                     if ($stanza->attrs['type'] == 'unavailable') {
                        _info('Got "unavailable" presence notification from "'
                            . $from->resource . '"');
-                       $event = 'on_user_offline';
+                       $event = 'user_offline';
                     }
                 } else {
                     _info('Got "available" presence notification from "'
                         . $from->resource . '"');
-                    $event = 'on_user_online';
+                    $event = 'user_online';
                 }
             } else {
                 $roster_notified[$from->to_string()] = true;
@@ -183,11 +186,11 @@ function on_presence_stanza($stanza) {
     if ($roster_complete && isset($event)) {
         if (isset($roster_notified[$from->to_string()])) {
             switch ($event) {
-                case 'on_user_online':
+                case 'user_online':
                     _info('User "' . $from->resource . '" updated the status');
                     return;  // Status change, not really went online
 
-                case 'on_user_offline':
+                case 'user_offline':
                     _info('User "' . $from->resource . '" went offline');
                     unset($roster_notified[$from->to_string()]);
                     break;

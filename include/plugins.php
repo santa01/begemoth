@@ -35,11 +35,11 @@ function register_handler($name, $handler) {
     return true;
 }
 
-function dispatch_handler($name) {
+function dispatch_handler($name, $argument) {
     global $plugins;
 
-    if (array_key_exists($name, $plugins) && function_exists($plugins[$name])) {
-        return call_user_func($plugins[$name]);
+    if (isset($plugins[$name]) && function_exists($plugins[$name])) {
+        return call_user_func($plugins[$name], $argument);
     }
 
     return null;

@@ -24,7 +24,11 @@
 
 require_once __DIR__ . '/../include/plugins.php';
 
-function dice_handler() {
+function dice_handler($argument) {
+    if (isset($argument)) {
+        return null;
+    }
+
     return "\n\n" . mt_rand(1, 20);
 }
 
