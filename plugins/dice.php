@@ -25,11 +25,28 @@
 require_once __DIR__ . '/../include/plugins.php';
 
 function dice_handler($argument) {
-    if (isset($argument)) {
+    if (!isset($argument)) {
         return null;
     }
 
-    return "\n\n" . mt_rand(1, 20);
+    if (!preg_match('/^(\d*)?d(\d+)(\+(\d*))?$/', $argument, $parameters)){
+        return null;
+    }
+
+    $throws = ($parameters[1] != '') ? intval($parameters[1]) : 1;
+    $faces = intval($parameters[2]);
+    $modifier = isset($parameters[4]) ? intval($parameters[4]) : 0;
+
+    if ($throws < 1 || $faces < 1 || $modifier < 0) {
+        return null;
+    }
+
+    $total = $modifier;
+    for ($i = 0; $i < $throws; $i++) {
+        $total += mt_rand(1, $faces);
+    }
+
+    return "\n\n" . $total;
 }
 
 register_handler('dice', 'dice_handler');
