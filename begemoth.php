@@ -51,9 +51,7 @@ if (($config = load_json($options['c'])) == false) {
     exit(1);
 }
 
-#
-# From this point we imply config has all vital options defined
-#
+// From this point imply config has all the options defined
 
 _info('Loading dictionary from "' . $config['dictionary'] . '"');
 if (($dictionary = load_json($config['dictionary'])) == false) {
@@ -92,6 +90,8 @@ $begemoth->require_xep(array(
     '0203',  // Delayed Delivery
     '0199'   // XMPP Ping
 ));
+
+// All callbacks are defined in include/handlers.php
 
 $begemoth->add_cb('on_auth_success', 'on_auth_success');
 $begemoth->add_cb('on_auth_failure', 'on_auth_failure');

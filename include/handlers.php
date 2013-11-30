@@ -88,6 +88,8 @@ function get_event_response($event) {
     return null;
 }
 
+// JAXL event handlers
+
 function on_auth_success() {
     global $begemoth, $conference;
 
@@ -120,7 +122,7 @@ function on_groupchat_message($stanza) {
     preg_match('/^(\S+)\s*(.*)$/', trim($stanza->body), $command);
     array_shift($command);  // Remove full match from $command[0]
     if (isset($command[1]) && $command[1] == '') {
-        unset($command[1]);  // Remove empty match
+        unset($command[1]);  // Remove empty match of (.*) group
     }
 
     $command_parts = count($command);
