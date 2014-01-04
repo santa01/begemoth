@@ -22,16 +22,18 @@
  * SOFTWARE.
  */
 
-require_once __DIR__ . '/include/JAXL/jaxl.php';
-require_once __DIR__ . '/include/handlers.php';
-require_once __DIR__ . '/include/utilites.php';
-require_once __DIR__ . '/include/plugins.php';
+require_once __DIR__ . '/handlers.php';
+require_once __DIR__ . '/utilites.php';
+require_once __DIR__ . '/plugins.php';
+require_once __DIR__ . '/globals.php';
+require_once JAXL_DIR . '/jaxl.php';
 
 function print_help() {
-    echo('Usage: ' . basename(__FILE__) . ' -c config [options]\n\n'
+    echo('Usage: ' . basename(__FILE__) . ' [options]\n'
        . 'Available options:\n'
-       . '\t-f: run begemoth in foreground\n'
-       . '\t-h: print help\n\n');
+       . '  -c <config>  daemon configuration file\n'
+       . '  -f           run begemoth in foreground\n'
+       . '  -h           print this help and exit\n');
 }
 
 $options = getopt('c:fh');
@@ -41,8 +43,7 @@ if (isset($options['h'])) {
 }
 
 if (!isset($options['c'])) {
-    print_help();
-    exit(1);
+    $options['c'] = CONFIG_DIR . '/config.json';
 }
 
 _info('Loading configuration from "' . $options['c'] . '"');
@@ -67,9 +68,9 @@ if (!isset($options['f'])) {
     daemonize();
 }
 
-_info('Loading plugins from "' . $config['plugins_dir'] . '"');
-if (!load_plugins($config['plugins_dir'])) {
-    _warning('Failed to load plugins from"' . $config['plugins_dir'] . '"');
+_info('Loading plugins from "' . PLUGINS_DIR . '"');
+if (!load_plugins(PLUGINS_DIR)) {
+    _warning('Failed to load plugins from"' . PLUGINS_DIR . '"');
 }
 
 $begemoth = new JAXL(array(
@@ -90,8 +91,6 @@ $begemoth->require_xep(array(
     '0203',  // Delayed Delivery
     '0199'   // XMPP Ping
 ));
-
-// All callbacks are defined in include/handlers.php
 
 $begemoth->add_cb('on_auth_success', 'on_auth_success');
 $begemoth->add_cb('on_auth_failure', 'on_auth_failure');

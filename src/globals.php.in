@@ -22,6 +22,10 @@
  * SOFTWARE.
  */
 
+define('PLUGINS_DIR', '%LIBDIR%/begemoth/plugins');
+define('CONFIG_DIR', '%CONFDIR%/begemoth');
+define('JAXL_DIR', '%JAXLDIR%');
+
 define('NAME', 'Begemoth');
 define('VERSION', '0.2.0');
 

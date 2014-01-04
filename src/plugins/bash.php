@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-require_once __DIR__ . '/../include/plugins.php';
+require_once __DIR__ . '/../plugins.php';
 
 function bash_handler($argument) {
     if (isset($argument)) {
