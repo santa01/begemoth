@@ -4,18 +4,10 @@ Latest version of the bot is available at:
 https://github.com/santa01/begemoth
 
 Begemoth replies to the jabber groupchat messages if any of pre-configured
-commands (see sample config and dictionary files) is found in that messages.
+commands (see sample config and dictionary files) are found in that messages.
 If more than one response is defined for a particular command than the final
-one is choosen on a random basis. Begemoth also performs simple pattern
-substitution and executes php code and sends the output in reply (if
-configured).
-
-Bot requires php5 and JAXL3 library (https://github.com/abhinavsingh/JAXL)
-which has been merged into include/JAXL subtree. To update JAXL dependency
-you can do:
-
-    git remote add -f --no-tags jaxl https://github.com/abhinavsingh/JAXL.git
-    git pull -s subtree jaxl v3.x
+one is choosen on a random basis. A simple plugin API is also available.
+Bot requires php5 and JAXL3 library (https://github.com/abhinavsingh/JAXL).
 
 If you are interested in the bot, you can contact me via santa.ssh@gmail.com
 
