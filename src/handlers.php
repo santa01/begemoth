@@ -46,31 +46,28 @@ function response_lookup($command) {
 function get_command_response($command) {
     global $dictionary;
 
-    // Try available plugins first
+    _info('Trying "plugins" section');
     if (isset($dictionary['plugins'][$command[0]])) {
-        _info('Trying "plugins" section');
         if (($output = dispatch_handler($command[0], @$command[1])) != null) {
             return response_lookup($dictionary['plugins'][$command[0]])
                 . $output;
         }
     }
 
-    // Try extended commands list
+    _info('Trying "extended_commands" section');
     if (isset($dictionary['extended_commands'][$command[0]])
         && isset($command[1])
     ) {
-        _info('Trying "extended_commands" section');
         return response_lookup($dictionary['extended_commands'][$command[0]]);
     }
 
-    // Fallback to simple command despite passed argument (if any)
+    _info('Trying "commands" section');
     if (isset($dictionary['commands'][$command[0]])) {
-        _info('Trying "commands" section');
         return response_lookup($dictionary['commands'][$command[0]]);
     }
 
+    _info('Trying "unknown_commands" section');
     if (isset($dictionary['unknown_commands'])) {
-        _info('Trying "unknown_commands" section');
         return response_lookup($dictionary['unknown_commands']);
     }
 
@@ -80,8 +77,8 @@ function get_command_response($command) {
 function get_event_response($event) {
     global $dictionary;
 
+    _info('Trying "events" section');
     if (isset($dictionary['events'][$event])) {
-        _info('Trying "events" section');
         return response_lookup($dictionary['events'][$event]);
     }
 
@@ -204,11 +201,9 @@ function on_presence_stanza($stanza) {
         }
 
         _info('Looking for event "' . $event . '"');
-
         if (($response = get_event_response($event)) != null) {
             $response = strtr($response,
                 array('{USERNAME}' => $from->resource));
-
             sleepf($config['response_delay']);
 
             _info('Replying with: ' . $response);

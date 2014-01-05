@@ -90,6 +90,7 @@ $begemoth->add_cb('on_get_iq', 'on_get_iq');
 
 $conference = new XMPPJid($config['conference'] . '/' . $config['nickname']);
 
+_info('Loading plugins from "' . PLUGINS_DIR . '"');
 if (!load_plugins(PLUGINS_DIR)) {
     _warning('Failed to load plugins from"' . PLUGINS_DIR . '"');
 }

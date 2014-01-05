@@ -23,6 +23,8 @@
  */
 
 require_once __DIR__ . '/../plugins.php';
+require_once __DIR__ . '/../globals.php';
+require_once JAXL_DIR . '/jaxl.php';
 
 function bash_handler($argument) {
     if (isset($argument)) {
@@ -41,6 +43,9 @@ function bash_handler($argument) {
     return "\n\n" . htmlspecialchars_decode($quote);
 }
 
-register_handler('bash', 'bash_handler');
+_info('Registering "bash" plugin');
+if (!register_handler('bash', 'bash_handler')) {
+    _warning('Failed to register "bash" plugin');
+}
 
 ?>

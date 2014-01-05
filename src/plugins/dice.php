@@ -23,6 +23,8 @@
  */
 
 require_once __DIR__ . '/../plugins.php';
+require_once __DIR__ . '/../globals.php';
+require_once JAXL_DIR . '/jaxl.php';
 
 function dice_handler($argument) {
     if (!isset($argument)) {
@@ -49,6 +51,9 @@ function dice_handler($argument) {
     return "\n\n" . $total;
 }
 
-register_handler('dice', 'dice_handler');
+_info('Registering "dice" plugin');
+if (!register_handler('dice', 'dice_handler')) {
+    _warning('Failed to register "dice" plugin');
+}
 
 ?>
