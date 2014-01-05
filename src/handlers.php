@@ -160,20 +160,15 @@ function on_presence_stanza($stanza) {
         if (strtolower($from->to_string())
             == strtolower($conference->to_string())
         ) {
-            _info('Got "available" presence notification from myself');
             $roster_complete = true;
             $event = 'self_online';
         } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
             if ($roster_complete) {
                 if (isset($stanza->attrs['type'])) {
                     if ($stanza->attrs['type'] == 'unavailable') {
-                       _info('Got "unavailable" presence notification from "'
-                           . $from->resource . '"');
-                       $event = 'user_offline';
+                        $event = 'user_offline';
                     }
                 } else {
-                    _info('Got "available" presence notification from "'
-                        . $from->resource . '"');
                     $event = 'user_online';
                 }
             } else {
@@ -182,24 +177,28 @@ function on_presence_stanza($stanza) {
         }
     }
 
-    if ($roster_complete && isset($event)) {
+    $valid_event = false;
+    if (isset($event)) {
         if (isset($roster_notified[$from->to_string()])) {
-            switch ($event) {
-                case 'user_online':
-                    _info('User "' . $from->resource . '" updated the status');
-                    return;  // Status change, not really went online
-
-                case 'user_offline':
-                    _info('User "' . $from->resource . '" went offline');
-                    unset($roster_notified[$from->to_string()]);
-                    break;
+            if ($event == 'user_offline') {
+                _info('User "' . $from->resource . '" went offline');
+                unset($roster_notified[$from->to_string()]);
+                $valid_event = true;
             }
-        } else {
-            // Somebody really went online
+        } elseif ($event == 'user_online') {
             _info('User "' . $from->resource . '" went online');
             $roster_notified[$from->to_string()] = true;
+            $valid_event = true;
+        } elseif ($event == 'self_online') {
+            _info('I went online. Users already in the conference:');
+            foreach ($roster_notified as $user => $online) {
+                _info('>> ' . $user);
+            }
+            $valid_event = true;
         }
+    }
 
+    if ($valid_event) {
         _info('Looking for event "' . $event . '"');
         if (($response = get_event_response($event)) != null) {
             $response = strtr($response,
