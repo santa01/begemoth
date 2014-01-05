@@ -53,7 +53,7 @@ function dice_handler($argument) {
 
 _info('Registering "dice" plugin');
 if (!register_handler('dice', 'dice_handler')) {
-    _warning('Failed to register "dice" plugin');
+    _warning('Registration failed');
 }
 
 ?>

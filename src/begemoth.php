@@ -51,11 +51,6 @@ if (($config = load_json($options['c'])) == false) {
     exit(1);
 }
 
-if (($dictionary = load_json($config['dictionary'])) == false) {
-    _error('Failed to load "' . $config['dictionary'] . '"');
-    exit(1);
-}
-
 if (!isset($options['f'])) {
     daemonize();
 }
@@ -90,9 +85,15 @@ $begemoth->add_cb('on_get_iq', 'on_get_iq');
 
 $conference = new XMPPJid($config['conference'] . '/' . $config['nickname']);
 
+_info('Loading dictionary from "' . $config['dictionary'] . '"');
+if (($dictionary = load_json($config['dictionary'])) == false) {
+    _warning('Failed to load dictionary');
+    $dictionary = array();
+}
+
 _info('Loading plugins from "' . PLUGINS_DIR . '"');
 if (!load_plugins(PLUGINS_DIR)) {
-    _warning('Failed to load plugins from"' . PLUGINS_DIR . '"');
+    _warning('Failed to load plugins');
 }
 
 $begemoth->start();

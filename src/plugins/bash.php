@@ -45,7 +45,7 @@ function bash_handler($argument) {
 
 _info('Registering "bash" plugin');
 if (!register_handler('bash', 'bash_handler')) {
-    _warning('Failed to register "bash" plugin');
+    _warning('Registration failed');
 }
 
 ?>
