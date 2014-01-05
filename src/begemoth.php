@@ -46,33 +46,23 @@ if (!isset($options['c'])) {
     $options['c'] = CONFIG_DIR . '/config.json';
 }
 
-_info('Loading configuration from "' . $options['c'] . '"');
 if (($config = load_json($options['c'])) == false) {
     _error('Failed to load "' . $options['c'] . '"');
     exit(1);
 }
 
-// From this point imply config has all the options defined
-
-_info('Loading dictionary from "' . $config['dictionary'] . '"');
 if (($dictionary = load_json($config['dictionary'])) == false) {
     _error('Failed to load "' . $config['dictionary'] . '"');
     exit(1);
 }
 
 if (!isset($options['f'])) {
-    _info('Redirecting logs to "' . $log_path . '"');
-    $log_path = $config['private_dir'] . '/log/jaxl.log';
-
-    _info('Forking to background');
     daemonize();
 }
 
-_info('Loading plugins from "' . PLUGINS_DIR . '"');
-if (!load_plugins(PLUGINS_DIR)) {
-    _warning('Failed to load plugins from"' . PLUGINS_DIR . '"');
-}
+// From this point imply config has all the options defined
 
+$log_path = $config['private_dir'] . '/log/jaxl.log';
 $begemoth = new JAXL(array(
     'jid'       => $config['jid'],
     'pass'      => $config['password'],
@@ -81,7 +71,7 @@ $begemoth = new JAXL(array(
     'force_tls' => $config['tls'],
     'resource'  => $config['resource'],
     'log_level' => $config['verbose'] ? JAXL_DEBUG : JAXL_WARNING,
-    'log_path'  => isset($log_path) ? $log_path : null,
+    'log_path'  => !isset($options['f']) ? $log_path : null,
     'priv_dir'  => $config['private_dir'],
     'strict'    => false
 ));
@@ -100,7 +90,10 @@ $begemoth->add_cb('on_get_iq', 'on_get_iq');
 
 $conference = new XMPPJid($config['conference'] . '/' . $config['nickname']);
 
-_info('Starting main loop');
+if (!load_plugins(PLUGINS_DIR)) {
+    _warning('Failed to load plugins from"' . PLUGINS_DIR . '"');
+}
+
 $begemoth->start();
 
 ?>
