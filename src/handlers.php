@@ -49,8 +49,8 @@ function get_command_response($command) {
     _info('Trying "plugins" section');
     if (isset($dictionary['plugins'][$command[0]])) {
         if (($output = dispatch_handler($command[0], @$command[1])) != null) {
-            return response_lookup($dictionary['plugins'][$command[0]])
-                . $output;
+            $response = response_lookup($dictionary['plugins'][$command[0]]); 
+            return strtr($response, array('{OUTPUT}' => $output));
         }
     }
 

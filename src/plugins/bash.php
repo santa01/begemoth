@@ -40,7 +40,7 @@ function bash_handler($argument) {
     $quote = strtr($quote, array("\n" => ''));
     $quote = preg_replace("/^.*;\">(.*)<' \+ '\/div>.*$/U", '$1', $quote);
     $quote = preg_replace("/<' \+ 'br( )?(\/)?>/", "\n", $quote);
-    return "\n\n" . htmlspecialchars_decode($quote);
+    return htmlspecialchars_decode($quote);
 }
 
 _info('Registering "bash" plugin');

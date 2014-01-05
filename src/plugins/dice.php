@@ -48,7 +48,7 @@ function dice_handler($argument) {
         $total += mt_rand(1, $faces);
     }
 
-    return "\n\n" . $total;
+    return $total;
 }
 
 _info('Registering "dice" plugin');
