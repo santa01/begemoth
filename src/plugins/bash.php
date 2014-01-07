@@ -27,13 +27,22 @@ require_once __DIR__ . '/../globals.php';
 require_once JAXL_DIR . '/jaxl.php';
 
 function bash_handler($argument) {
+    global $config;
+
     if (isset($argument)) {
         return null;
     }
 
-    $context = stream_context_create(array('http' => array('timeout' => 3)));
-    $quote = @file_get_contents('http://bash.im/forweb/?u', false, $context);
+    $timeout = $config['bash']['timeout'];
+    $context = stream_context_create(
+        array('http' => array('timeout' => $timeout)));
+
+    $bash_uri = 'http://bash.im/forweb/?u';
+    $quote = @file_get_contents($bash_uri, false, $context);
     if ($quote === false) {
+         _warning('HTTP request failed:'
+            . ' uri = "' . $bash_uri
+            . '", timeout = ' . $timeout);
         return null;
     }
 

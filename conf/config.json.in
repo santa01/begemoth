@@ -13,6 +13,10 @@
     "private_dir":    "%RUNDIR%/begemoth",
     "dictionary":     "%CONFDIR%/begemoth/dictionary.json",
 
+    "bash": {
+        "timeout": 3
+    },
+
     "jukebox": {
         "artists": [
             "Ozzy Osbourne",
