@@ -27,6 +27,10 @@ require_once __DIR__ . '/plugins.php';
 require_once __DIR__ . '/globals.php';
 require_once JAXL_DIR . '/jaxl.php';
 
+define('EV_SELF_ONLINE',  'self_online');
+define('EV_USER_ONLINE',  'user_online');
+define('EV_USER_OFFLINE', 'user_offline');
+
 $roster_notified = array();
 $roster_complete = false;
 
@@ -165,15 +169,15 @@ function on_presence_stanza($stanza) {
             == strtolower($conference->to_string())
         ) {
             $roster_complete = true;
-            $event = 'self_online';
+            $event = EV_SELF_ONLINE;
         } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
             if ($roster_complete) {
                 if (isset($stanza->attrs['type'])) {
                     if ($stanza->attrs['type'] == 'unavailable') {
-                        $event = 'user_offline';
+                        $event = EV_USER_OFFLINE;
                     }
                 } else {
-                    $event = 'user_online';
+                    $event = EV_USER_ONLINE;
                 }
             } else {
                 $roster_notified[$from->to_string()] = true;
@@ -184,20 +188,18 @@ function on_presence_stanza($stanza) {
     $valid_event = false;
     if (isset($event)) {
         if (isset($roster_notified[$from->to_string()])) {
-            if ($event == 'user_offline') {
+            if ($event == EV_USER_OFFLINE) {
                 _info('User "' . $from->resource . '" went offline');
                 unset($roster_notified[$from->to_string()]);
                 $valid_event = true;
             }
-        } elseif ($event == 'user_online') {
+        } elseif ($event == EV_USER_ONLINE) {
             _info('User "' . $from->resource . '" went online');
             $roster_notified[$from->to_string()] = true;
             $valid_event = true;
-        } elseif ($event == 'self_online') {
-            _info('I went online. Users already in the conference:');
-            foreach ($roster_notified as $user => $online) {
-                _info('>> ' . $user);
-            }
+        } elseif ($event == EV_SELF_ONLINE) {
+            _info('Introducing myself');
+            $roster_notified[$from->to_string()] = true;
             $valid_event = true;
         }
     }
