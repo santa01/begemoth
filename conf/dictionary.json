@@ -27,15 +27,22 @@
     "plugins": {
         "bash": {
             "responses": [
-                "/me is reading a quote:",
-                "Quote of the day:"
+                "/me is reading a quote:\n\n{OUTPUT}",
+                "Quote of the day:\n\n{OUTPUT}"
             ]
         },
 
         "dice": {
             "responses": [
-                "/me is throwing a dice:",
-                "The voices in my head keep telling me:"
+                "/me is throwing a dice:\n\n{OUTPUT}",
+                "The voices in my head keep telling me:\n\n{OUTPUT}"
+            ]
+        },
+
+        "jukebox": {
+            "responses": [
+                "Now playing: {OUTPUT}",
+                "Next track is {OUTPUT}"
             ]
         }
     }

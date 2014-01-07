@@ -28,6 +28,9 @@ require_once __DIR__ . '/plugins.php';
 require_once __DIR__ . '/globals.php';
 require_once JAXL_DIR . '/jaxl.php';
 
+$config = array();
+$dictionary = array();
+
 function print_help() {
     echo('Usage: ' . basename(__FILE__) . ' [options]\n'
        . 'Available options:\n'

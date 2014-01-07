@@ -11,5 +11,16 @@
     "response_delay": 1.0,
     "command_prefix": "!",
     "private_dir":    "%RUNDIR%/begemoth",
-    "dictionary":     "%CONFDIR%/begemoth/dictionary.json"
+    "dictionary":     "%CONFDIR%/begemoth/dictionary.json",
+
+    "jukebox": {
+        "artists": [
+            "Ozzy Osbourne",
+            "Queen"
+        ],
+        "max_paragraphs": 2,
+        "max_lines": 10,
+        "google_link": true,
+        "timeout": 3
+    }
 }
