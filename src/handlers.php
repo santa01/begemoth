@@ -125,6 +125,7 @@ function on_groupchat_message($stanza) {
     $command_parts = count($command);
     if ($command_parts > 0 && $command[0][0] == $config['command_prefix']) {
         $command[0] = substr($command[0], 1);  // Remove command prefix
+        $lookup_start = microtime(true);
 
         _info('Looking for command "' . $command[0] . '"');
         if (($response = get_command_response($command)) != null) {
@@ -140,7 +141,10 @@ function on_groupchat_message($stanza) {
                     break;
             }
 
-            sleepf($config['response_delay']);
+            $lookup_time = microtime(true) - $lookup_start;
+            if ($lookup_time < $config['response_delay']) {
+                sleepf($config['response_delay'] - $lookup_time);
+            }
 
             _info('Replying with: ' . $response);
             $begemoth->xeps['0045']->send_groupchat($config['conference'],
