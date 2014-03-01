@@ -23,7 +23,7 @@
  */
 
 define('PLUGINS_DIR', '%LIBDIR%/begemoth/plugins');
-define('CONFIG_DIR',  '%CONFDIR%/begemoth');
+define('CONFIG_DIR',  '%CFGDIR%/begemoth');
 define('JAXL_DIR',    '%JAXLDIR%');
 
 define('NAME', 'Begemoth');

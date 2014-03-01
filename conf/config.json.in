@@ -11,7 +11,7 @@
     "response_delay": 1.0,
     "command_prefix": "!",
     "private_dir":    "%RUNDIR%/begemoth",
-    "dictionary":     "%CONFDIR%/begemoth/dictionary.json",
+    "dictionary":     "%CFGDIR%/begemoth/dictionary.json",
 
     "bash": {
         "timeout": 3

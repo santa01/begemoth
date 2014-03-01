@@ -24,7 +24,7 @@ PREFIX := /usr/local
 RUNDIR := $(PREFIX)/var/run
 LIBDIR := $(PREFIX)/lib
 BINDIR := $(PREFIX)/bin
-CONFDIR := $(PREFIX)/etc
+CFGDIR := $(PREFIX)/etc
 JAXLDIR := $(PREFIX)/share/php/jaxl
 
 TARGET := begemoth
@@ -42,7 +42,7 @@ $(OUTPUT):
 	sed -i \
 		-e 's|%RUNDIR%|$(RUNDIR)|g' $(OUTPUT) \
 		-e 's|%LIBDIR%|$(LIBDIR)|g' $(OUTPUT) \
-		-e 's|%CONFDIR%|$(CONFDIR)|g' $(OUTPUT) \
+		-e 's|%CFGDIR%|$(CFGDIR)|g' $(OUTPUT) \
 		-e 's|%JAXLDIR%|$(JAXLDIR)|g' $(OUTPUT)
 	chmod +x src/$(TARGET)
 
@@ -50,11 +50,11 @@ install: $(TARGET)
 	mkdir -p $(DESTDIR)/$(BINDIR) \
 		$(DESTDIR)/$(RUNDIR)/$(TARGET) \
 		$(DESTDIR)/$(LIBDIR)/$(TARGET) \
-		$(DESTDIR)/$(CONFDIR)/$(TARGET)
+		$(DESTDIR)/$(CFGDIR)/$(TARGET)
 	cp -r src/plugins $(DESTDIR)/$(LIBDIR)/$(TARGET)
 	cp src/*.php $(DESTDIR)/$(LIBDIR)/$(TARGET)
 	cp src/$(TARGET) $(DESTDIR)/$(BINDIR)
-	cp conf/*.json $(DESTDIR)/$(CONFDIR)/$(TARGET)
+	cp conf/*.json $(DESTDIR)/$(CFGDIR)/$(TARGET)
 
 clean:
 	rm -f $(OUTPUT)
