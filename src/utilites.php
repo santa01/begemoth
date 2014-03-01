@@ -22,19 +22,6 @@
  * SOFTWARE.
  */
 
-function var_string($variable)
-{
-    ob_start();
-    var_dump($variable);
-    return ob_get_clean();
-}
-
-function eval_string($code) {
-    ob_start();
-    eval($code);
-    return ob_get_clean();
-}
-
 function daemonize() {
     if (pcntl_fork()) {
         exit(0);
