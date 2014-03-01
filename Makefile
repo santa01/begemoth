@@ -28,23 +28,20 @@ CFGDIR := $(PREFIX)/etc
 JAXLDIR := $(PREFIX)/share/php/jaxl
 
 TARGET := begemoth
-INPUT := $(shell find $(CURDIR) -name '*.in')
-OUTPUT := $(patsubst %.in, %, $(INPUT))
+SOURCES := $(shell find $(CURDIR) -name '*.in')
+OBJECTS := $(patsubst %.in, %, $(SOURCES))
 
 all: $(TARGET)
 
-$(TARGET): $(OUTPUT)
+$(TARGET): $(OBJECTS)
 
-$(OUTPUT):
-	for INPUT in $(INPUT) ; do \
-		cp $${INPUT} $${INPUT%.in} ; \
-	done
+%: %.in
+	cp $< $(<:%.in=%)
 	sed -i \
-		-e 's|%RUNDIR%|$(RUNDIR)|g' $(OUTPUT) \
-		-e 's|%LIBDIR%|$(LIBDIR)|g' $(OUTPUT) \
-		-e 's|%CFGDIR%|$(CFGDIR)|g' $(OUTPUT) \
-		-e 's|%JAXLDIR%|$(JAXLDIR)|g' $(OUTPUT)
-	chmod +x src/$(TARGET)
+		-e 's|%RUNDIR%|$(RUNDIR)|g' \
+		-e 's|%LIBDIR%|$(LIBDIR)|g' \
+		-e 's|%CFGDIR%|$(CFGDIR)|g' \
+		-e 's|%JAXLDIR%|$(JAXLDIR)|g' $(<:%.in=%)
 
 install: $(TARGET)
 	mkdir -p $(DESTDIR)/$(BINDIR) \
@@ -52,9 +49,10 @@ install: $(TARGET)
 		$(DESTDIR)/$(LIBDIR)/$(TARGET) \
 		$(DESTDIR)/$(CFGDIR)/$(TARGET)
 	cp -r src/plugins $(DESTDIR)/$(LIBDIR)/$(TARGET)
+	cp conf/*.json $(DESTDIR)/$(CFGDIR)/$(TARGET)
 	cp src/*.php $(DESTDIR)/$(LIBDIR)/$(TARGET)
 	cp src/$(TARGET) $(DESTDIR)/$(BINDIR)
-	cp conf/*.json $(DESTDIR)/$(CFGDIR)/$(TARGET)
+	chmod +x $(DESTDIR)/$(BINDIR)/$(TARGET)
 
 clean:
-	rm -f $(OUTPUT)
+	rm -f $(OBJECTS)
