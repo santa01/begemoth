@@ -45,7 +45,7 @@
                 "Next track is {OUTPUT}"
             ]
         }
-    }
+    },
 
     "events": {
         "user_online": {
