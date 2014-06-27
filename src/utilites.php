@@ -34,6 +34,10 @@ function daemonize() {
     posix_setsid();
 }
 
+function shutdown() {
+    posix_kill(posix_getpid(), SIGTERM);
+}
+
 function load_json($json_file) {
     if (($json = @file_get_contents($json_file)) === false) {
         return false;

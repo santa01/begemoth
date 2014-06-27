@@ -28,6 +28,7 @@ require_once __DIR__ . '/globals.php';
 require_once JAXL_DIR . '/jaxl.php';
 
 define('EV_SELF_ONLINE',  'self_online');
+define('EV_SELF_OFFLINE', 'self_offline');
 define('EV_USER_ONLINE',  'user_online');
 define('EV_USER_OFFLINE', 'user_offline');
 
@@ -109,8 +110,8 @@ function on_auth_failure($reason) {
 
 function on_groupchat_message($stanza) {
     global $begemoth, $config;
-    $delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
 
+    $delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
     if (!$stanza->body || !$stanza->from || $delay) {
         return;
     }
@@ -162,20 +163,26 @@ function on_groupchat_message($stanza) {
 function on_presence_stanza($stanza) {
     global $begemoth, $config, $conference;
     global $roster_notified, $roster_complete;
-    $from = new XMPPJid($stanza->from);
 
+    $from = new XMPPJid($stanza->from);
     if ($stanza->exists('x', NS_MUC . '#user') !== false) {
         if (strtolower($from->to_string())
             == strtolower($conference->to_string())
         ) {
-            $roster_complete = true;
-            $event = EV_SELF_ONLINE;
+            if (isset($stanza->attrs['type'])
+                && $stanza->attrs['type'] == 'unavailable'
+            ) {
+                $event = EV_SELF_OFFLINE;
+            } else {
+                $event = EV_SELF_ONLINE;
+                $roster_complete = true;
+            }
         } elseif (strtolower($from->bare) == strtolower($conference->bare)) {
             if ($roster_complete) {
-                if (isset($stanza->attrs['type'])) {
-                    if ($stanza->attrs['type'] == 'unavailable') {
-                        $event = EV_USER_OFFLINE;
-                    }
+                if (isset($stanza->attrs['type'])
+                    && $stanza->attrs['type'] == 'unavailable'
+                ) {
+                    $event = EV_USER_OFFLINE;
                 } else {
                     $event = EV_USER_ONLINE;
                 }
@@ -188,19 +195,26 @@ function on_presence_stanza($stanza) {
     $valid_event = false;
     if (isset($event)) {
         if (isset($roster_notified[$from->to_string()])) {
-            if ($event == EV_USER_OFFLINE) {
-                _info('User "' . $from->resource . '" went offline');
+            if (in_array($event, array(EV_USER_OFFLINE, EV_SELF_OFFLINE))) {
                 unset($roster_notified[$from->to_string()]);
-                $valid_event = true;
+
+                if ($event == EV_USER_OFFLINE) {
+                    _info('User "' . $from->resource . '" went offline');
+                    $valid_event = true;
+                } else {
+                    _info('Kicked out from conference');
+                    shutdown();
+                }
             }
-        } elseif ($event == EV_USER_ONLINE) {
-            _info('User "' . $from->resource . '" went online');
+        } elseif (in_array($event, array(EV_USER_ONLINE, EV_SELF_ONLINE))) {
             $roster_notified[$from->to_string()] = true;
             $valid_event = true;
-        } elseif ($event == EV_SELF_ONLINE) {
-            _info('Introducing myself');
-            $roster_notified[$from->to_string()] = true;
-            $valid_event = true;
+
+            if ($event == EV_USER_ONLINE) {
+                _info('User "' . $from->resource . '" went online');
+            } else {
+                _info('Introducing myself');
+            }
         }
     }
 
