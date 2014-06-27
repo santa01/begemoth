@@ -49,7 +49,7 @@ install: $(TARGET)
 		$(DESTDIR)/$(LIBDIR)/$(TARGET) \
 		$(DESTDIR)/$(CFGDIR)/$(TARGET)
 	cp -r src/plugins $(DESTDIR)/$(LIBDIR)/$(TARGET)
-	cp conf/*.json $(DESTDIR)/$(CFGDIR)/$(TARGET)
+	cp config/*.json $(DESTDIR)/$(CFGDIR)/$(TARGET)
 	cp src/*.php $(DESTDIR)/$(LIBDIR)/$(TARGET)
 	cp src/$(TARGET) $(DESTDIR)/$(BINDIR)
 	chmod +x $(DESTDIR)/$(BINDIR)/$(TARGET)
