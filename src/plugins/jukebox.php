@@ -28,7 +28,7 @@ require_once JAXL_DIR . '/jaxl.php';
 
 define('URI_REGEX',   '/<h3 class=\"r\"><a href=\"\/url\?q=(.+)&amp;/U');
 define('SONGS_REGEX', '/<li><a href=\"(.+)\" title=\"(.+) Lyrics\">/U');
-define('SONG_REGEX',  '/<div style=\"font-size: \d+px;\">(.+)<\/div>/Us');
+define('SONG_REGEX',  '/<script src=\"\/\/srv\.tonefuse.+\"><\/script><br>(.+)<script>/Us');
 
 define('LYRICS_HOST', 'www.sing365.com');
 define('GOOGLE_HOST', 'www.google.com');
