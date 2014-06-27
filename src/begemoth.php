@@ -32,11 +32,11 @@ $config = array();
 $dictionary = array();
 
 function print_help() {
-    echo('Usage: ' . basename(__FILE__) . ' [options]\n'
-       . 'Available options:\n'
-       . '  -c <config>  daemon configuration file\n'
-       . '  -f           run begemoth in foreground\n'
-       . '  -h           print this help and exit\n');
+    echo("Usage: " . basename(__FILE__) . " [options]\n"
+       . "Available options:\n"
+       . "  -c <config>  daemon configuration file\n"
+       . "  -f           run begemoth in foreground\n"
+       . "  -h           print this help and exit\n");
 }
 
 $options = getopt('c:fh');
