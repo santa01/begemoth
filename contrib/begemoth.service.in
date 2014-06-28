@@ -1,0 +1,12 @@
+[Unit]
+Description=Jabber conference bot
+Requires=network.target
+
+[Service]
+Type=forking
+Restart=always
+RestartSec=5
+ExecStart=%BINDIR%/begemoth
+
+[Install]
+WantedBy=multi-user.target
