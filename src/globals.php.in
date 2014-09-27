@@ -27,6 +27,6 @@ define('CONFIG_DIR',  '%CFGDIR%/begemoth');
 define('JAXL_DIR',    '%JAXLDIR%');
 
 define('NAME', 'Begemoth');
-define('VERSION', '0.3.3');
+define('VERSION', '0.3.4');
 
 ?>
