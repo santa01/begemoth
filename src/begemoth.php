@@ -31,6 +31,30 @@ require_once JAXL_DIR . '/jaxl.php';
 $config = array();
 $dictionary = array();
 
+$begemoth = null;
+$conference = null;
+
+$error_codes = array(
+    E_WARNING           => 'E_WARNING',
+    E_NOTICE            => 'E_NOTICE',
+    E_USER_ERROR        => 'E_USER_ERROR',
+    E_USER_WARNING      => 'E_USER_WARNING',
+    E_USER_NOTICE       => 'E_USER_NOTICE',
+    E_STRICT            => 'E_STRICT',
+    E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
+    E_DEPRECATED        => 'E_DEPRECATED',
+    E_USER_DEPRECATED   => 'E_USER_DEPRECATED',
+    E_ALL               => 'E_ALL'
+);
+
+function print_error($errno, $errstr, $errfile, $errline) {
+    global $error_codes;
+
+    $error_code = $error_codes[$errno];
+    $error_source = basename($errfile) . ":" . $errline;
+    _debug($error_code . " at " . $error_source . " - " . $errstr);
+}
+
 function print_help() {
     echo("Usage: " . basename(__FILE__) . " [options]\n"
        . "Available options:\n"
@@ -54,24 +78,42 @@ if (($config = load_json($options['c'])) == false) {
     exit(1);
 }
 
-if (!isset($options['f'])) {
+$daemon = !isset($options['f']);
+if ($daemon) {
     daemonize();
 }
 
 // From this point imply config has all the options defined
 
-$log_path = $config['private_dir'] . '/log/jaxl.log';
+$log_path = $daemon ? $config['private_dir'] . '/log/jaxl.log' : null;
+$log_level = JAXL_INFO;
+
+if ($config['debug']) {
+    set_error_handler('print_error', E_ALL);
+    $log_level = JAXL_DEBUG;
+}
+
+$strict_ssl = $config['strict_ssl'];
+$stream_context = stream_context_create(array(
+    'ssl' => array(
+        'verify_peer'       => $strict_ssl,
+        'verify_peer_name'  => $strict_ssl,
+        'allow_self_signed' => !$strict_ssl
+    )
+));
+
 $begemoth = new JAXL(array(
-    'jid'       => $config['jid'],
-    'pass'      => $config['password'],
-    'host'      => $config['host'],
-    'port'      => $config['port'],
-    'force_tls' => $config['tls'],
-    'resource'  => $config['resource'],
-    'log_level' => $config['verbose'] ? JAXL_DEBUG : JAXL_WARNING,
-    'log_path'  => !isset($options['f']) ? $log_path : null,
-    'priv_dir'  => $config['private_dir'],
-    'strict'    => false
+    'jid'            => $config['jid'],
+    'pass'           => $config['password'],
+    'host'           => $config['host'],
+    'port'           => $config['port'],
+    'force_tls'      => $config['tls'],
+    'resource'       => $config['resource'],
+    'priv_dir'       => $config['private_dir'],
+    'log_path'       => $log_path,
+    'log_level'      => $log_level,
+    'stream_context' => $stream_context,
+    'strict'         => false
 ));
 
 $begemoth->require_xep(array(
