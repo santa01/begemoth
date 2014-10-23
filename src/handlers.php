@@ -165,10 +165,10 @@ function on_presence_stanza($stanza) {
     global $roster_notified, $roster_complete;
 
     $from = new XMPPJid($stanza->from);
+    $from_jid = $from->to_string();
+
     if ($stanza->exists('x', NS_MUC . '#user') !== false) {
-        if (strtolower($from->to_string())
-            == strtolower($conference->to_string())
-        ) {
+        if (strtolower($from_jid) == strtolower($conference->to_string())) {
             if (isset($stanza->attrs['type'])
                 && $stanza->attrs['type'] == 'unavailable'
             ) {
@@ -187,16 +187,16 @@ function on_presence_stanza($stanza) {
                     $event = EV_USER_ONLINE;
                 }
             } else {
-                $roster_notified[$from->to_string()] = true;
+                $roster_notified[$from_jid] = true;
             }
         }
     }
 
     $valid_event = false;
     if (isset($event)) {
-        if (isset($roster_notified[$from->to_string()])) {
-            if (in_array($event, array(EV_USER_OFFLINE, EV_SELF_OFFLINE))) {
-                unset($roster_notified[$from->to_string()]);
+        if (isset($roster_notified[$from_jid])) {
+            if ($event == EV_USER_OFFLINE || $event == EV_SELF_OFFLINE) {
+                unset($roster_notified[$from_jid]);
 
                 if ($event == EV_USER_OFFLINE) {
                     _info('User "' . $from->resource . '" went offline');
@@ -206,8 +206,8 @@ function on_presence_stanza($stanza) {
                     shutdown();
                 }
             }
-        } elseif (in_array($event, array(EV_USER_ONLINE, EV_SELF_ONLINE))) {
-            $roster_notified[$from->to_string()] = true;
+        } elseif ($event == EV_USER_ONLINE || $event == EV_SELF_ONLINE) {
+            $roster_notified[$from_jid] = true;
             $valid_event = true;
 
             if ($event == EV_USER_ONLINE) {
@@ -226,8 +226,8 @@ function on_presence_stanza($stanza) {
             sleepf($config['response_delay']);
 
             _info('Replying with: ' . $response);
-            $begemoth->xeps['0045']->send_groupchat($config['conference'],
-                $response);
+            $begemoth->xeps['0045']->send_groupchat(
+                $config['conference'], $response);
         } else {
             _info('I have nothing to reply');
         }
