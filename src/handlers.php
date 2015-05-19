@@ -244,7 +244,7 @@ function on_get_iq($stanza) {
     $attrs = array(
         'id' => $stanza->id,
         'to' => $stanza->from,
-        'from' => $conference->to_string()
+        'from' => $stanza->to
     );
 
     if ($stanza->type == 'get') {
