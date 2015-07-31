@@ -32,7 +32,7 @@
             ]
         },
 
-        "dice": {
+        "roll": {
             "responses": [
                 "/me is throwing a dice:\n\n{OUTPUT}",
                 "The voices in my head keep telling me:\n\n{OUTPUT}"
