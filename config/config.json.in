@@ -23,9 +23,9 @@
             "Ozzy Osbourne",
             "Queen"
         ],
-        "max_paragraphs": 2,
-        "max_lines": 10,
+        "apikey": "deadbeef",
         "google_link": true,
+        "max_paragraphs": 2,
         "timeout": 3
     }
 }
